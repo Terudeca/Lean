@@ -359,7 +359,12 @@ namespace QuantConnect.Brokerages.Backtesting
                             {
                                 if (fill.Status == OrderStatus.Filled)
                                 {
-                                    fill.OrderFee = security.FeeModel.GetOrderFee(security, order);
+                                    // this check is provided for backwards compatibility of older user-defined fill models
+                                    // that may be performing fee computation inside the fill model w/out invoking the fee model
+                                    if (fill.OrderFee == 0m)
+                                    {
+                                        fill.OrderFee = security.FeeModel.GetOrderFee(security, order);
+                                    }
                                 }
                             }
                         }
